@@ -10,7 +10,7 @@
 //枚举每个类型的名字
 typedef enum{
     TOKEN_KEYWORD,//关键字
-    TOKEN_INENTIFIER,//标识符
+    TOKEN_IDENTIFIER,//标识符
     TOKEN_NUMBER,//数字
     TOKEN_OPERATOR,//运算符或符号
     TOKEN_END,//特殊类型
@@ -28,7 +28,7 @@ typedef struct {
 int is_keyword(const char *str)
 {
     //列举关键字
-    const char *keyword[] = {"int","float","double","char","void","if","else","while","for","do","return","break","continue","switch","case","default","struct","typedef"}//后续需要补充！！！！
+    const char *keyword[] = {"int","float","double","char","void","if","else","while","for","do","return","break","continue","switch","case","default","struct","typedef"};//后续需要补充！！！！
     int num_keyword = 18;
     for(int i=0;i<num_keyword;i++)
     {
@@ -104,6 +104,10 @@ void get_next_token(const char *source,int *pos,Token *token)
         // 只要后面是数字，就一直读
         while (isdigit(current_char)||(current_char=='.' && has_dot==0))
         {
+            if(current_char == '.')
+            {
+                has_dot = 1;
+            }
             (*token).value[i] = current_char;
             i++;
 
@@ -140,6 +144,7 @@ void get_next_token(const char *source,int *pos,Token *token)
         (*token).type = TOKEN_STRING;
         return;
     }
+
 
 
     // 5. 处理符号 (支持双字符，例如 ==, >=, &&)
