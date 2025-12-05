@@ -3,6 +3,8 @@
 //
 #include<stdio.h>
 #include<ctype.h> //包含判断字符类型的函数
+#include<string.h>
+
 
 //1:定义token的类型标签
 //枚举每个类型的名字
@@ -12,6 +14,7 @@ typedef enum{
     TOKEN_NUMBER,//数字
     TOKEN_OPERATOR,//运算符或符号
     TOKEN_END,//特殊类型
+    TOKEN_STRING,//字符串类型
 }TokenType;
 
 //2:定义token结构体
@@ -25,8 +28,8 @@ typedef struct {
 int is_keyword(const char *str)
 {
     //列举关键字
-    const char *keyword[] = {"int","float","if","else","return","while","for"}//后续需要补充！！！！
-    int num_keyword = 7;
+    const char *keyword[] = {"int","float","double","char","void","if","else","while","for","do","return","break","continue","switch","case","default","struct","typedef"}//后续需要补充！！！！
+    int num_keyword = 18;
     for(int i=0;i<num_keyword;i++)
     {
         if(strcmp(str,keyword[i])==0)
@@ -66,6 +69,8 @@ void get_next_token(const char *source,int *pos,Token *token)
         (*token).type = TOKEN_END;//设置类型为结束
         return;
     }
+
+
     // 步骤3: 处理 单词
     // 规则：如果第一个字符是字母或下划线
     if (isalpha(current_char) || current_char == '_')
@@ -91,12 +96,14 @@ void get_next_token(const char *source,int *pos,Token *token)
     }
 
     //步骤4: 处理 数字
-    // 规则：如果第一个字符是数字
+    // 规则：如果第一个字符是数字,支持检测小数
     if (isdigit(current_char))
     {
         int i = 0;
+        int has_dot = 0;//标记是否遇到了小数点
         // 只要后面是数字，就一直读
-        while (isdigit(current_char)) {
+        while (isdigit(current_char)||(current_char=='.' && has_dot==0))
+        {
             (*token).value[i] = current_char;
             i++;
 
@@ -108,12 +115,58 @@ void get_next_token(const char *source,int *pos,Token *token)
         return;
     }
 
-    //步骤 5: 处理 符号 (运算符/标点)
-    // 如果不是字母也不是数字，那就当做符号处理 (比如 = ; + )
-    // 这里简单处理，每次只取 1 个字符
+
+
+    //新增的，，可以处理字符串。。。
+    if(current_char=='"')
+    {
+        int i = 0;
+        (*token).value[i++] = '"';//存入起始的引号
+        (*pos)++;
+        current_char = source[*pos];
+        //一一直读取到下一个引号
+        while(current_char!='"' && current_char!='\0')
+        {
+            (*token).value[i++] = current_char;
+            (*pos)++;
+            current_char = source[*pos];
+        }
+        if(current_char=='"')
+        {
+            (*token).value[i++] = '"';
+            (*pos)++;
+        }
+        (*token).value[i] = '\0';
+        (*token).type = TOKEN_STRING;
+        return;
+    }
+
+
+    // 5. 处理符号 (支持双字符，例如 ==, >=, &&)
+    char next_char = source[(*pos) + 1];
+
+    // 检查常见的双字符符号
+    if ((current_char == '=' && next_char == '=') || // ==
+        (current_char == '!' && next_char == '=') || // !=
+        (current_char == '>' && next_char == '=') || // >=
+        (current_char == '<' && next_char == '=') || // <=
+        (current_char == '&' && next_char == '&') || // &&
+        (current_char == '|' && next_char == '|') || // ||
+
+        (current_char == '+' && next_char == '+') || // ++
+        (current_char == '-' && next_char == '-')) { // --
+
+        (*token).value[0] = current_char;
+        (*token).value[1] = next_char;
+        (*token).value[2] = '\0';
+        (*token).type = TOKEN_OPERATOR;
+        (*pos) += 2; // 跳过两个字符
+        return;
+    }
+
+    // 单字符符号
     (*token).value[0] = current_char;
     (*token).value[1] = '\0';
     (*token).type = TOKEN_OPERATOR;
-    // 别忘了把光标往后移一位，否则下次还会读到这个符号，造成死循环
-    (*pos) = (*pos) + 1;
+    (*pos)++;
 }
