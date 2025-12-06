@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include "include/tokenization.h" // 【重要】必须引入头文件，才能连接到你的分词器
+#include "include/vectorization.h"//引入自己的头文件，里面包含全局变量
 
 // 第一部分：全局配置 (特征表)
 // 向量维度：决定了我们一共统计多少种特征
 // 35维 = 32个具体词 + 3个抽象类
-#define VECTOR_DIMENSION 35
 
 // 【特征映射表 (Feature Map)】
 // 这是一个“字典”，它的下标(0,1,2...)对应向量数组的下标。
