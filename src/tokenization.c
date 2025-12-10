@@ -92,11 +92,11 @@ void get_next_token(const char *source,int *pos,Token *token)
         } else {
             (*token).type = TOKEN_IDENTIFIER;
         }
-        return; // 这个 Token 处理完了，返回
+        return;
     }
 
     //步骤4: 处理 数字
-    // 规则：如果第一个字符是数字,支持检测小数
+    //支持检测小数
     if (isdigit(current_char))
     {
         int i = 0;
@@ -151,15 +151,15 @@ void get_next_token(const char *source,int *pos,Token *token)
     char next_char = source[(*pos) + 1];
 
     // 检查常见的双字符符号
-    if ((current_char == '=' && next_char == '=') || // ==
-        (current_char == '!' && next_char == '=') || // !=
-        (current_char == '>' && next_char == '=') || // >=
-        (current_char == '<' && next_char == '=') || // <=
-        (current_char == '&' && next_char == '&') || // &&
-        (current_char == '|' && next_char == '|') || // ||
+    if ((current_char == '=' && next_char == '=') ||
+        (current_char == '!' && next_char == '=') ||
+        (current_char == '>' && next_char == '=') ||
+        (current_char == '<' && next_char == '=') ||
+        (current_char == '&' && next_char == '&') ||
+        (current_char == '|' && next_char == '|') ||
 
-        (current_char == '+' && next_char == '+') || // ++
-        (current_char == '-' && next_char == '-')) { // --
+        (current_char == '+' && next_char == '+') ||
+        (current_char == '-' && next_char == '-')) {
 
         (*token).value[0] = current_char;
         (*token).value[1] = next_char;
