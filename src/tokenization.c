@@ -4,7 +4,7 @@
 #include<stdio.h>
 #include<ctype.h> //包含判断字符类型的函数
 #include<string.h>
-#include "include/tokenization.h"
+#include "tokenization.h"
 
 
 //辅助函数：判断一个单词是不是C语言的关键字

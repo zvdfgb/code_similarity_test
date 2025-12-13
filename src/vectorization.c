@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#include "include/tokenization.h" // 【重要】必须引入头文件，才能连接到你的分词器
-#include "include/vectorization.h"//引入自己的头文件，里面包含全局变量
+#include "tokenization.h" // 【重要】必须引入头文件，才能连接到你的分词器
+#include "vectorization.h"//引入自己的头文件，里面包含全局变量
 
 // 第一部分：全局配置 (特征表)
 // 向量维度：决定了我们一共统计多少种特征
@@ -43,14 +43,12 @@ int get_feature_index(Token *token) {
 
     //1. 优先处理三大抽象类
 
-    // 如果是变量名，不管叫什么，统一归类到 IDX_ID (32号)
-    if (token->type == TOKEN_IDENTIFIER) return IDX_ID;
-
-    // 如果是数字，统一归类到 IDX_NUM (33号)
-    if (token->type == TOKEN_NUMBER)     return IDX_NUM;
-
-    // 如果是字符串，统一归类到 IDX_STR (34号)
-    if (token->type == TOKEN_STRING)     return IDX_STR;
+    // 优化：忽略变量名、数字和字符串的具体数量统计
+    // 原因：这两个特征在所有代码中都大量存在，会掩盖真正的逻辑结构差异（如 for vs while），导致完全不同的代码相似度过高。
+    // 我们希望比较的是“骨架”（关键字+运算符），而不是“皮肉”（变量名）。
+    if (token->type == TOKEN_IDENTIFIER) return -1;
+    if (token->type == TOKEN_NUMBER)     return -1;
+    if (token->type == TOKEN_STRING)     return -1;
 
     // --- 2. 处理具体的关键字和符号 ---
 
@@ -101,32 +99,3 @@ void generate_vector(const char *code, int vector[]) {
     } while (token.type != TOKEN_END);
 }
 
-// ==========================================================
-// 第四部分：测试主函数
-// ==========================================================
-
-int main() {
-    // 测试代码：包含关键字、变量、数字、符号
-    const char *test_code = "int score = 60; if(score > 0) return score;";
-
-    // 准备一个数组存结果
-    int my_vector[VECTOR_DIMENSION];
-
-    printf("正在分析代码: %s\n", test_code);
-    printf("--------------------------------------------------\n");
-
-    // 生成向量
-    generate_vector(test_code, my_vector);
-
-    // 打印结果
-    printf("生成的特征向量 (只显示非 0 的项):\n");
-    printf("[ ");
-    for (int i = 0; i < VECTOR_DIMENSION; i++) {
-        if (my_vector[i] > 0) {
-            printf("%s:%d | ", FEATURE_MAP[i], my_vector[i]);
-        }
-    }
-    printf("]\n");
-
-    return 0;
-}
