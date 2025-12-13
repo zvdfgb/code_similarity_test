@@ -1,4 +1,4 @@
-#include"similarity.h"
+#include"include/similarity.h"
 
 double calculate_cosine_similarity(const int *vecA,const int *vecB,int size){
 	//Similarity=(A * B) / (||A|| * ||B||)

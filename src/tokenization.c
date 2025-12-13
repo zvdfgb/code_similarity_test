@@ -4,25 +4,8 @@
 #include<stdio.h>
 #include<ctype.h> //包含判断字符类型的函数
 #include<string.h>
+#include "include/tokenization.h"
 
-
-//1:定义token的类型标签
-//枚举每个类型的名字
-typedef enum{
-    TOKEN_KEYWORD,//关键字
-    TOKEN_IDENTIFIER,//标识符
-    TOKEN_NUMBER,//数字
-    TOKEN_OPERATOR,//运算符或符号
-    TOKEN_END,//特殊类型
-    TOKEN_STRING,//字符串类型
-}TokenType;
-
-//2:定义token结构体
-//包含他的类型和他的具体内容
-typedef struct {
-    TokenType type;//类型
-    char value[100];//值
-}Token;
 
 //辅助函数：判断一个单词是不是C语言的关键字
 int is_keyword(const char *str)
