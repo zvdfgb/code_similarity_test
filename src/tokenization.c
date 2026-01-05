@@ -25,7 +25,7 @@ int is_keyword(const char *str)
 
 
 /**
-* 3:核心分词函数
+*:核心分词函数
 *source = 源代码字符串
 *pos = 当前读到的位置的指针
 *token = 用来存放解析结果的结构体
